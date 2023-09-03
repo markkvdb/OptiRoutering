@@ -3,8 +3,8 @@
 	import type { Customer } from '$lib/interfaces';
 
 	export let customer: Customer;
-	export let capacitated: boolean = false;
-	export let time_window: boolean = false;
+	export let maximum_capacity: number | null;
+	export let time_windows: boolean;
 	export let syncCustomers: () => void;
 
 	async function findLocation(event: FocusEvent) {
@@ -40,7 +40,7 @@
 	{/if}
 </label>
 
-{#if capacitated}
+{#if maximum_capacity}
 	<label>
 		Demand:
 		<input
@@ -55,7 +55,7 @@
 	</label>
 {/if}
 
-{#if time_window}
+{#if time_windows}
 	<label>
 		Earliest time:
 		<input

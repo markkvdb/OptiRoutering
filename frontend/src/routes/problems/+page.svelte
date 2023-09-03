@@ -1,25 +1,29 @@
 <script lang="ts">
-	import type { Customer } from '$lib/interfaces';
+	import type { RouteDefinition } from '$lib/interfaces';
 	import CustomerInput from './CustomerInput.svelte';
 
-	let depot: string = '';
-	let customers: Customer[] = [
-		{
+	let route_definition: RouteDefinition = {
+		depot: {
 			address: '',
-			location: undefined,
-			demand: undefined,
-			earliest_time: undefined,
-			latest_time: undefined
-		}
-	];
-	let capacitated: boolean = false;
-	let time_window: boolean = false;
-	let max_capacity: number | null = null;
+			location: undefined
+		},
+		customers: [
+			{
+				address: '',
+				location: undefined,
+				demand: undefined,
+				earliest_time: undefined,
+				latest_time: undefined
+			}
+		],
+		maximum_capacity: null,
+		time_windows: false
+	};
 
 	const solve = () => {};
 	const addCustomer = () => {
-		customers = [
-			...customers,
+		route_definition.customers = [
+			...route_definition.customers,
 			{
 				address: '',
 				location: undefined,
@@ -30,42 +34,39 @@
 		];
 	};
 	const syncCustomers = () => {
-		customers = [...customers];
+		route_definition.customers = [...route_definition.customers];
 	};
 
-	$: result = JSON.stringify({ depot, customers, capacitated, time_window, max_capacity });
+	$: result = JSON.stringify({
+		...route_definition
+	});
 </script>
 
 <h2>Define problem</h2>
 
 <form on:submit|preventDefault={solve}>
 	<label>
-		Capacitated:
-		<input type="checkbox" id="capacitated" name="capacitated" bind:checked={capacitated} />
+		Maximum capacity:
+		<input type="number" name="maximum_capacity" bind:value={route_definition.maximum_capacity} />
 	</label>
 
 	<br />
 
 	<label>
-		Time window:
-		<input type="checkbox" id="time_window" name="time_window" bind:checked={time_window} />
+		Time windows:
+		<input
+			type="checkbox"
+			id="time_windows"
+			name="time_window"
+			bind:checked={route_definition.time_windows}
+		/>
 	</label>
 
 	<br />
-
-	{#if capacitated}
-		<!-- define maximum capacity -->
-		<label>
-			Maximum capacity:
-			<input type="number" name="max_capacity" required bind:value={max_capacity} />
-		</label>
-
-		<br />
-	{/if}
 
 	<label>
 		Start address:
-		<input type="text" name="start" required bind:value={depot} />
+		<input type="text" name="start" required bind:value={route_definition.depot.address} />
 	</label>
 
 	<br />
@@ -73,8 +74,13 @@
 	Customers:
 	<br />
 
-	{#each customers as customer}
-		<CustomerInput {customer} {capacitated} {time_window} {syncCustomers} />
+	{#each route_definition.customers as customer}
+		<CustomerInput
+			{customer}
+			{syncCustomers}
+			maximum_capacity={route_definition.maximum_capacity}
+			time_windows={route_definition.time_windows}
+		/>
 		<br />
 	{/each}
 
