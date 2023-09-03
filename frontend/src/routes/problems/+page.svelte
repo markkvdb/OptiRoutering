@@ -1,54 +1,24 @@
 <script lang="ts">
-	import type { RouteDefinition } from '$lib/interfaces';
-	import ProblemForm from './ProblemForm.svelte';
-
 	export let data;
-	let route_definition: RouteDefinition | undefined;
 
-	$: result = JSON.stringify({
-		...route_definition
-	});
+	function openPage(event: Event) {
+		const element = event.currentTarget as HTMLSelectElement;
+		const index = element.value;
 
-	function createEmptyRouteDefinition(): RouteDefinition {
-		return {
-			depot: {
-				address: '',
-				coordinates: undefined
-			},
-			customers: [
-				{
-					name: '',
-					location: {
-						address: '',
-						coordinates: undefined
-					},
-					demand: undefined,
-					earliest_time: undefined,
-					latest_time: undefined
-				}
-			],
-			maximum_capacity: null,
-			time_windows: false
-		};
+		if (index == 'new') {
+			window.location.href = '/problems/new';
+		} else {
+			window.location.href = `/problems/` + index;
+		}
 	}
 </script>
 
-<h2>Define problem</h2>
+<h2>Select definition</h2>
 
 <!-- select existing route definition or create new one -->
-<select bind:value={route_definition}>
-	<option value={createEmptyRouteDefinition()}>Create new route definition</option>
-	{#each data.route_definitions as route_definition}
-		<option value={route_definition}>{route_definition.depot.address}</option>
+<select on:change={openPage}>
+	<option value="new">Create new route definition</option>
+	{#each data.route_definitions as route_definition, i}
+		<option value={i}>{route_definition.depot.address}</option>
 	{/each}
 </select>
-
-{#if route_definition}
-	<ProblemForm bind:route_definition />
-{/if}
-
-<h2>Result</h2>
-
-<p>
-	{result}
-</p>
