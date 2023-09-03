@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "optiroutering"
+version = "0.1.0"
+description = ""
+authors = ["markkvdb <github@mvanderbroek.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = { version = "^0.103.0", extras = ["all"] }
+pyvrp = "^0.6.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.287"
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
