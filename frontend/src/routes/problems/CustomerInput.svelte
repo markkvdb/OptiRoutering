@@ -25,6 +25,7 @@
 	<input
 		type="text"
 		name="name"
+		value={customer.name}
 		required
 		on:change={(e) => {
 			customer.name = e.currentTarget.value;
@@ -38,6 +39,7 @@
 	<input
 		type="text"
 		name="address"
+		value={customer.location.address}
 		required
 		on:change={(e) => {
 			customer.location.address = e.currentTarget.value;
@@ -59,6 +61,7 @@
 		<input
 			type="number"
 			name="demand"
+			value={customer.demand}
 			required
 			on:change={(e) => {
 				customer.demand = parseInt(e.currentTarget.value);
@@ -74,6 +77,7 @@
 		<input
 			type="time"
 			name="earliest_time"
+			value={customer.earliest_time}
 			required
 			on:change={(e) => {
 				customer.earliest_time = new Date(e.currentTarget.value);
@@ -86,6 +90,7 @@
 		<input
 			type="time"
 			name="latest_time"
+			value={customer.latest_time}
 			required
 			on:change={(e) => {
 				customer.latest_time = new Date(e.currentTarget.value);

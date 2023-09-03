@@ -21,6 +21,7 @@
 		];
 	};
 	const syncCustomers = () => {
+		console.log('syncing customers');
 		route_definition.customers = [...route_definition.customers];
 	};
 	async function findCoordinates(event: FocusEvent) {
@@ -78,7 +79,7 @@
 	Customers:
 	<br />
 
-	{#each route_definition.customers as customer}
+	{#each route_definition.customers as customer (customer.name)}
 		<CustomerInput
 			{customer}
 			{syncCustomers}
