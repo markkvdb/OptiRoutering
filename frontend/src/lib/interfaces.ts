@@ -1,25 +1,25 @@
 // Type definitions for the data structures used in the application
 
-export interface Location {
+export interface Coordinates {
     lat: number;
     lng: number;
 }
 
-export interface Depot {
+export interface Location {
     address: string;
-    location: Location | null | undefined;
+    coordinates: Coordinates | null | undefined;
 }
 
 export interface Customer {
-    address: string;
-    location: Location | null | undefined;
+    name: string;
+    location: Location;
     demand: number | undefined;
     earliest_time: Date | undefined;
     latest_time: Date | undefined;
 }
 
 export interface RouteDefinition {
-    depot: Depot;
+    depot: Location;
     customers: Customer[];
     maximum_capacity: number | null;
     time_windows: boolean;

@@ -7,18 +7,31 @@
 	export let time_windows: boolean;
 	export let syncCustomers: () => void;
 
-	async function findLocation(event: FocusEvent) {
+	async function findCoordinates(event: FocusEvent) {
 		const element = event.currentTarget as HTMLInputElement;
 		let address = element.value;
 
 		if (address == '' || address == null) {
-			customer.location = null;
+			customer.location.coordinates = null;
 		} else {
-			customer.location = await geolocate(address);
+			customer.location.coordinates = await geolocate(address);
 		}
 		syncCustomers();
 	}
 </script>
+
+<label>
+	Name:
+	<input
+		type="text"
+		name="name"
+		required
+		on:change={(e) => {
+			customer.name = e.currentTarget.value;
+			syncCustomers();
+		}}
+	/>
+</label>
 
 <label>
 	Address:
@@ -27,15 +40,15 @@
 		name="address"
 		required
 		on:change={(e) => {
-			customer.address = e.currentTarget.value;
+			customer.location.address = e.currentTarget.value;
 			syncCustomers();
 		}}
-		on:focusout={findLocation}
+		on:focusout={findCoordinates}
 	/>
 
-	{#if customer.location == null}
+	{#if customer.location.coordinates == null}
 		❌
-	{:else if customer.location != undefined}
+	{:else if customer.location.coordinates != undefined}
 		✅
 	{/if}
 </label>

@@ -1,16 +1,19 @@
 <script lang="ts">
 	import type { RouteDefinition } from '$lib/interfaces';
-	import CustomerInput from './CustomerInput.svelte';
+	import ProblemForm from './ProblemForm.svelte';
 
 	let route_definition: RouteDefinition = {
 		depot: {
 			address: '',
-			location: undefined
+			coordinates: undefined
 		},
 		customers: [
 			{
-				address: '',
-				location: undefined,
+				name: '',
+				location: {
+					address: '',
+					coordinates: undefined
+				},
 				demand: undefined,
 				earliest_time: undefined,
 				latest_time: undefined
@@ -20,21 +23,8 @@
 		time_windows: false
 	};
 
-	const solve = () => {};
-	const addCustomer = () => {
-		route_definition.customers = [
-			...route_definition.customers,
-			{
-				address: '',
-				location: undefined,
-				demand: undefined,
-				earliest_time: undefined,
-				latest_time: undefined
-			}
-		];
-	};
-	const syncCustomers = () => {
-		route_definition.customers = [...route_definition.customers];
+	const constructProblem = (e) => {
+		// compute the distance matrix
 	};
 
 	$: result = JSON.stringify({
@@ -44,52 +34,11 @@
 
 <h2>Define problem</h2>
 
-<form on:submit|preventDefault={solve}>
-	<label>
-		Maximum capacity:
-		<input type="number" name="maximum_capacity" bind:value={route_definition.maximum_capacity} />
-	</label>
+<ProblemForm bind:route_definition />
 
-	<br />
+<br />
 
-	<label>
-		Time windows:
-		<input
-			type="checkbox"
-			id="time_windows"
-			name="time_window"
-			bind:checked={route_definition.time_windows}
-		/>
-	</label>
-
-	<br />
-
-	<label>
-		Start address:
-		<input type="text" name="start" required bind:value={route_definition.depot.address} />
-	</label>
-
-	<br />
-
-	Customers:
-	<br />
-
-	{#each route_definition.customers as customer}
-		<CustomerInput
-			{customer}
-			{syncCustomers}
-			maximum_capacity={route_definition.maximum_capacity}
-			time_windows={route_definition.time_windows}
-		/>
-		<br />
-	{/each}
-
-	<button type="button" on:click={addCustomer}>Add customer</button>
-
-	<br />
-
-	<button type="submit">Solve</button>
-</form>
+<button type="submit" on:click|preventDefault={constructProblem}>Construct problem</button>
 
 <h2>Result</h2>
 

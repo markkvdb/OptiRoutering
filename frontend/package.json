@@ -34,6 +34,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"nominatim-js": "^1.0.10"
+		"@routingjs/valhalla": "^0.1.0"
 	}
 }
