@@ -22,4 +22,4 @@ Select an existing route or create a new one:
 	{/each}
 </select>
 
-<button on:click={() => (window.location.href = '/problems/new')}>New</button>
+<a href="/problems/new"><button>New</button></a>
