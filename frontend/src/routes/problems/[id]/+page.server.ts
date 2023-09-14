@@ -1,19 +1,20 @@
-import { error } from '@sveltejs/kit';
-import { route_definitions } from '../data';
+import { createServerClient } from '$lib/api';
 
-export function load({ params }) {
-    const id = parseInt(params.id);
-    if (isNaN(id)) {
-        throw error(400, "Invalid problem ID");
-    }
+export async function load({ params, fetch }) {
+    const client = createServerClient(fetch);
+    const route_definition = await client.GET("/routes/{id}", {
+        params: {
+            path: {
+                id: params.id
+            }
+        }
+    });
 
-    if (id >= route_definitions.length) {
-        throw error(404);
-    }
-
-    const route_definition = route_definitions[id]
 
     return {
-        route_definition
+        route_definition: {
+            data: route_definition.data,
+            error: route_definition.error,
+        },
     };
 }
