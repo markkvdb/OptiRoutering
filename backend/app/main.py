@@ -39,7 +39,7 @@ app = FastAPI()
 route_definitions: dict[str, RouteDefinition] = {}
 
 
-@app.post("/route")
+@app.post("/routes")
 async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
     """Calculate the optimal route for the given route definition."""
     route_definition = RouteDefinition(
@@ -50,8 +50,13 @@ async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
 
     return route_definition
 
-@app.get("/route/{id}")
+@app.get("/routes/{id}")
 async def route(id: str) -> RouteDefinition:
     """Get the route definition for the given route id."""
     return route_definitions[id]
 
+
+@app.get("/routes")
+async def routes() -> list[RouteDefinition]:
+    """Get all route definitions."""
+    return list(route_definitions.values())
