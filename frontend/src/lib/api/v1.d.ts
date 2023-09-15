@@ -44,10 +44,10 @@ export interface components {
       location: components["schemas"]["Location"];
       /** Demand */
       demand?: number | null;
-      /** Earliest Start */
-      earliest_start?: string | null;
-      /** Latest End */
-      latest_end?: string | null;
+      /** Earliest Time */
+      earliest_time?: string | null;
+      /** Latest Time */
+      latest_time?: string | null;
     };
     /** Customer */
     "Customer-Output": {
@@ -56,10 +56,10 @@ export interface components {
       location: components["schemas"]["Location"];
       /** Demand */
       demand: number | null;
-      /** Earliest Start */
-      earliest_start: string | null;
-      /** Latest End */
-      latest_end: string | null;
+      /** Earliest Time */
+      earliest_time: string | null;
+      /** Latest Time */
+      latest_time: string | null;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -85,7 +85,7 @@ export interface components {
        */
       time_windows: boolean;
       /** Id */
-      id: string;
+      id: number;
     };
     /** RouteDefinitionRequest */
     RouteDefinitionRequest: {
@@ -169,7 +169,7 @@ export interface operations {
   route_routes__id__get: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     responses: {

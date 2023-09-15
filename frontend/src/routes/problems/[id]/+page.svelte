@@ -2,9 +2,7 @@
 	export let data;
 </script>
 
-{#if data.route_definition.error}
-	<div>There was an error: {data.route_definition.error}</div>
-{:else if data.route_definition}
+{#if data.route_definition}
 	<h2>{data.route_definition.depot.address}</h2>
 
 	<h3>Depot</h3>

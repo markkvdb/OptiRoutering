@@ -1,9 +1,14 @@
+import { createServerClient } from '$lib/api';
+import type { RouteDefinition } from '$lib/interfaces.js';
 import { json } from '@sveltejs/kit';
-import { route_definitions } from './data';
 
-export async function POST({ request }): Promise<{ body: any; status: number; }> {
-    const route_definition = await request.json();
-    route_definitions.push(route_definition);
+export async function POST({ request, fetch }): Promise<{ body: RouteDefinition; status: number; }> {
+    const route_definition: RouteDefinition = await request.json();
+    const client = createServerClient(fetch);
 
-    return json(route_definition, { status: 201 });
+    const response = await client.POST("/routes", {
+        body: route_definition
+    });
+
+    return json(response.data, { status: 201 });
 }
