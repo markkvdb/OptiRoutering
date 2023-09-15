@@ -19,8 +19,8 @@ class Customer(BaseModel):
     name: str
     location: Location
     demand: int | None = None
-    earliest_start: time | None = None
-    latest_end: time | None = None
+    earliest_time: time | None = None
+    latest_time: time | None = None
 
 class BaseRouteDefinition(BaseModel):
     depot: Location
@@ -32,18 +32,43 @@ class RouteDefinitionRequest(BaseRouteDefinition):
     pass
 
 class RouteDefinition(BaseRouteDefinition):
-    id: str
+    id: int
 
 app = FastAPI()
 
-route_definitions: dict[str, RouteDefinition] = {}
+route_definitions: dict[int, RouteDefinition] = {
+    0: RouteDefinition(
+        id=0,
+        depot=Location(
+            address="Hauptstraße 1, 01067 Dresden",
+            coordinates=Coordinates(
+                lat=51.049328,
+                lng=13.738143
+            )
+        ),
+        customers=[
+            Customer(
+                name="Kunde 1",
+                location=Location(
+                    address="Hauptstraße 2, 01067 Dresden",
+                    coordinates=Coordinates(
+                        lat=52.049328,
+                        lng=13.738143
+                    )
+                )
+            )
+        ],
+        maximum_capacity=None,
+        time_windows=False
+    )
+}
 
 
 @app.post("/routes")
 async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
     """Calculate the optimal route for the given route definition."""
     route_definition = RouteDefinition(
-        id=uuid4().hex,
+        id=len(route_definitions),
         **route_request.dict()
     )
     route_definitions[route_definition.id] = route_definition
@@ -51,7 +76,7 @@ async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
     return route_definition
 
 @app.get("/routes/{id}")
-async def route(id: str) -> RouteDefinition:
+async def route(id: int) -> RouteDefinition:
     """Get the route definition for the given route id."""
     return route_definitions[id]
 
