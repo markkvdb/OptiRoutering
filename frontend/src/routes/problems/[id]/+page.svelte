@@ -1,5 +1,24 @@
 <script lang="ts">
+	import { createServerClient } from '$lib/api';
+
 	export let data;
+
+	let solution: number[] | undefined = undefined;
+
+	const solveProblem = async () => {
+		const client = createServerClient(fetch);
+
+		const response = await client.POST('/routes/{id}/solve', {
+			params: { path: { id: data.route_definition.id } }
+		});
+
+		if (response.data) {
+			solution = response.data;
+			console.log(solution);
+		} else {
+			alert('Something went wrong: ' + response.error);
+		}
+	};
 </script>
 
 {#if data.route_definition}
@@ -15,6 +34,20 @@
 		<h4>{customer.name}</h4>
 		<p>Address: {customer.location.address}</p>
 	{/each}
+
+	<br />
+
+	<button on:click={() => solveProblem()}>Solve</button>
+
+	{#if solution}
+		<h3>Optimal route</h3>
+
+		<ul>
+			{#each solution as customer_id}
+				<li>{data.route_definition.customers[customer_id - 1].name}</li>
+			{/each}
+		</ul>
+	{/if}
 {:else}
 	Loading...
 {/if}

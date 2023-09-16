@@ -24,6 +24,13 @@ export interface paths {
      */
     get: operations["route_routes__id__get"];
   };
+  "/routes/{id}/solve": {
+    /**
+     * Solve
+     * @description Solve and return order of customers to visit.
+     */
+    post: operations["solve_routes__id__solve_post"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -177,6 +184,34 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["RouteDefinition"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Solve
+   * @description Solve and return order of customers to visit.
+   */
+  solve_routes__id__solve_post: {
+    parameters: {
+      query?: {
+        max_runtime?: number;
+      };
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": number[];
         };
       };
       /** @description Validation Error */
