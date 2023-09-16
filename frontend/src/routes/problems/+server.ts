@@ -1,6 +1,6 @@
 import { createServerClient } from '$lib/api';
 import type { RouteDefinition } from '$lib/interfaces.js';
-import { json } from '@sveltejs/kit';
+import { error, json } from "@sveltejs/kit";
 
 export async function POST({ request, fetch }): Promise<{ body: RouteDefinition; status: number; }> {
     const route_definition: RouteDefinition = await request.json();
@@ -10,5 +10,10 @@ export async function POST({ request, fetch }): Promise<{ body: RouteDefinition;
         body: route_definition
     });
 
-    return json(response.data, { status: 201 });
+    if (response.error) {
+        throw error(response.response.status, response.response.text());
+    } else {
+        return json(response.data, { status: 201 });
+    }
+
 }

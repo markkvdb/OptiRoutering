@@ -48,6 +48,9 @@
 		on:focusout={findCoordinates}
 	/>
 
+	<input type="hidden" name="latitude" required value={customer.location.coordinates?.lat} />
+	<input type="hidden" name="longitude" required value={customer.location.coordinates?.lng} />
+
 	{#if customer.location.coordinates == null}
 		❌
 	{:else if customer.location.coordinates != undefined}

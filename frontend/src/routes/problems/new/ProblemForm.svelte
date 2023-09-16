@@ -35,9 +35,26 @@
 		}
 		syncCustomers();
 	}
+
+	const handleSubmit = async (event: SubmitEvent) => {
+		const response = await fetch('/problems', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(route_definition)
+		});
+
+		if (response.ok) {
+			const route_definition = await response.json();
+			window.location.href = `/problems/${route_definition.id}`;
+		} else {
+			alert('Something went wrong');
+		}
+	};
 </script>
 
-<form>
+<form on:submit|preventDefault={handleSubmit}>
 	<label>
 		Maximum capacity:
 		<input type="number" name="maximum_capacity" bind:value={route_definition.maximum_capacity} />
@@ -67,6 +84,13 @@
 			on:focusout={findCoordinates}
 		/>
 
+		<input
+			type="hidden"
+			name="start_coordinates"
+			required
+			bind:value={route_definition.depot.coordinates}
+		/>
+
 		{#if route_definition.depot.coordinates == null}
 			❌
 		{:else if route_definition.depot.coordinates != undefined}
@@ -90,4 +114,9 @@
 	{/each}
 
 	<button type="button" on:click={addCustomer}>Add customer</button>
+
+	<br />
+	<br />
+
+	<button type="submit">Submit</button>
 </form>
