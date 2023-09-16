@@ -1,9 +1,8 @@
 """Entrypoint to the web application."""
 
 from datetime import time
-from uuid import uuid4
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 
@@ -78,6 +77,8 @@ async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
 @app.get("/routes/{id}")
 async def route(id: int) -> RouteDefinition:
     """Get the route definition for the given route id."""
+    if id not in route_definitions:
+        raise HTTPException(status_code=404, detail="Route not found")
     return route_definitions[id]
 
 
