@@ -2,6 +2,8 @@ import { createServerClient } from '$lib/api';
 import type { components } from '$lib/api/v1';
 import { error } from '@sveltejs/kit';
 
+export const ssr = false;
+
 interface ProblemPageData {
     route_definition: components["schemas"]["RouteDefinition"];
 }

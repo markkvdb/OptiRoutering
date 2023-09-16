@@ -37,7 +37,9 @@
 	"type": "module",
 	"dependencies": {
 		"@routingjs/valhalla": "^0.1.0",
+		"leaflet": "^1.9.4",
 		"openapi-fetch": "^0.7.6",
+		"svelte-leafletjs": "^0.10.0",
 		"uuid": "^9.0.0"
 	}
 }
