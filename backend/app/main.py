@@ -2,6 +2,7 @@
 
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pyvrp import Model
 from pyvrp.stop import MaxRuntime
 
@@ -10,6 +11,21 @@ from app.models import (Coordinates, Customer, Location, RouteDefinition,
 from app.solver import create_problem_data
 
 app = FastAPI()
+
+origins = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://localhost"
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 route_definitions: dict[int, RouteDefinition] = {
     0: RouteDefinition(
@@ -77,7 +93,7 @@ async def routes() -> list[RouteDefinition]:
 
 
 @app.post("/routes/{id}/solve")
-async def solve(id: int, max_runtime: int = 5) -> list[int]:
+async def solve(id: int, max_runtime: int = 1) -> list[int]:
     """Solve and return order of customers to visit."""
     if id not in route_definitions:
         raise HTTPException(status_code=404, detail="Route not found")
@@ -86,4 +102,4 @@ async def solve(id: int, max_runtime: int = 5) -> list[int]:
     model = Model.from_data(problem_data)
     result = model.solve(stop=MaxRuntime(max_runtime))
 
-    return result.best.get_routes()[0].visits
+    return result.best.get_routes()[0].visits()
