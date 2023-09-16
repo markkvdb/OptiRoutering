@@ -1,37 +1,13 @@
 """Entrypoint to the web application."""
 
-from datetime import time
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pyvrp import Model
+from pyvrp.stop import MaxRuntime
 
-
-class Coordinates(BaseModel):
-    lat: float
-    lng: float
-
-class Location(BaseModel):
-    address: str
-    coordinates: Coordinates
-
-class Customer(BaseModel):
-    name: str
-    location: Location
-    demand: int | None = None
-    earliest_time: time | None = None
-    latest_time: time | None = None
-
-class BaseRouteDefinition(BaseModel):
-    depot: Location
-    customers: list[Customer]
-    maximum_capacity: int | None = None
-    time_windows: bool = False
-
-class RouteDefinitionRequest(BaseRouteDefinition):
-    pass
-
-class RouteDefinition(BaseRouteDefinition):
-    id: int
+from app.models import (Coordinates, Customer, Location, RouteDefinition,
+                        RouteDefinitionRequest)
+from app.solver import create_problem_data
 
 app = FastAPI()
 
@@ -39,20 +15,30 @@ route_definitions: dict[int, RouteDefinition] = {
     0: RouteDefinition(
         id=0,
         depot=Location(
-            address="Hauptstraße 1, 01067 Dresden",
+            address="Molenweg 4, 9984 XD Oudeschip, Netherlands",
             coordinates=Coordinates(
-                lat=51.049328,
-                lng=13.738143
+                lat=53.43018852613383,
+                lng=6.822970358886225
             )
         ),
         customers=[
             Customer(
-                name="Kunde 1",
+                name="Pieter Post",
                 location=Location(
-                    address="Hauptstraße 2, 01067 Dresden",
+                    address="Reitdiepskade 13, 9974 PJ Zoutkamp, Netherlands",
                     coordinates=Coordinates(
-                        lat=52.049328,
-                        lng=13.738143
+                        lat=53.336757963170854,
+                        lng=6.299897371189074
+                    )
+                )
+            ),
+            Customer(
+                name="Jip en Janneke",
+                location=Location(
+                    address="Oostindie 29, 9354 TD Zevenhuizen, Netherlands",
+                    coordinates=Coordinates(
+                        lat=53.134751495726526,
+                        lng=6.371766641002621
                     )
                 )
             )
@@ -74,11 +60,13 @@ async def route(route_request: RouteDefinitionRequest) -> RouteDefinition:
 
     return route_definition
 
+
 @app.get("/routes/{id}")
 async def route(id: int) -> RouteDefinition:
     """Get the route definition for the given route id."""
     if id not in route_definitions:
         raise HTTPException(status_code=404, detail="Route not found")
+
     return route_definitions[id]
 
 
@@ -86,3 +74,16 @@ async def route(id: int) -> RouteDefinition:
 async def routes() -> list[RouteDefinition]:
     """Get all route definitions."""
     return list(route_definitions.values())
+
+
+@app.post("/routes/{id}/solve")
+async def solve(id: int, max_runtime: int = 5) -> list[int]:
+    """Solve and return order of customers to visit."""
+    if id not in route_definitions:
+        raise HTTPException(status_code=404, detail="Route not found")
+
+    problem_data = create_problem_data(route_definitions[id])
+    model = Model.from_data(problem_data)
+    result = model.solve(stop=MaxRuntime(max_runtime))
+
+    return result.best.get_routes()[0].visits

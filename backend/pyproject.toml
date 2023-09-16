@@ -8,7 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = { version = "^0.103.0", extras = ["all"] }
-pyvrp = "^0.6.2"
+pyvrp = "^0.6.3"
+routingpy = "^1.3.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.287"
