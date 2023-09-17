@@ -57,6 +57,16 @@ route_definitions: dict[int, RouteDefinition] = {
                         lng=6.371766641002621
                     )
                 )
+            ),
+            Customer(
+                name="Meneer Bol",
+                location=Location(
+                    address="De Snik 20, 9974 NE Zoutkamp, Netherlands",
+                    coordinates=Coordinates(
+                        lat=53.33857250886743,
+                        lng=6.312097396543164,
+                    )
+                )
             )
         ],
         maximum_capacity=None,
