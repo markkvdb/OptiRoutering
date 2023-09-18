@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { RouteDefinition } from '$lib/api/models/routes';
-	import type L from 'leaflet';
 	import { onMount } from 'svelte';
-	import { LeafletMap, Marker, TileLayer } from 'svelte-leafletjs';
+	import { LeafletMap, Marker, Popup, TileLayer, Tooltip } from 'svelte-leafletjs';
 	import SolutionPath from './SolutionPath.svelte';
 
 	export let route_definition: RouteDefinition;
@@ -20,7 +19,7 @@
 		attribution: '© OpenStreetMap contributors'
 	};
 
-	let leafletMap: L.Map;
+	let leafletMap: LeafletMap;
 
 	onMount(() => {
 		const locations = [
@@ -30,7 +29,8 @@
 				customer.location.coordinates.lng
 			])
 		];
-		leafletMap.fitBounds(locations);
+		leafletMap.getMap().fitBounds(locations);
+		leafletMap.getMap().setMinZoom(leafletMap.getMap().getZoom());
 	});
 </script>
 
@@ -47,7 +47,10 @@
 
 			{#each route_definition.customers as customer}
 				{#if customer.location.coordinates}
-					<Marker latLng={[customer.location.coordinates.lat, customer.location.coordinates.lng]} />
+					<Marker latLng={[customer.location.coordinates.lat, customer.location.coordinates.lng]}>
+						<Popup>{customer.name} - {customer.location.address}</Popup>
+						<Tooltip>{customer.name}</Tooltip>
+					</Marker>
 				{/if}
 			{/each}
 		{/if}

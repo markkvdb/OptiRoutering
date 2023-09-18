@@ -29,11 +29,9 @@
 			],
 			'auto'
 		).then((response) => {
-			const features = response.directions.map((direction) => {
+			path_geojson.features = response.directions.map((direction) => {
 				return direction.feature;
 			});
-			console.log(features);
-			path_geojson.features = features;
 		});
 	}
 </script>

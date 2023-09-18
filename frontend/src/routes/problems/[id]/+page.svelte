@@ -15,7 +15,6 @@
 
 		if (response.data) {
 			solution = response.data;
-			console.log(solution);
 		} else {
 			alert('Something went wrong: ' + response.error);
 		}

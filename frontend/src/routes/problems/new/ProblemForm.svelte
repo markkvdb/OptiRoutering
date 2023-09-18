@@ -21,7 +21,6 @@
 		];
 	};
 	const syncCustomers = () => {
-		console.log('syncing customers');
 		route_definition.customers = [...route_definition.customers];
 	};
 	async function findCoordinates(event: FocusEvent) {
