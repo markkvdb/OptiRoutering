@@ -39,6 +39,8 @@
 
 	<button on:click={() => solveProblem()}>Solve</button>
 
+	<Map route_definition={data.route_definition} {solution} />
+
 	{#if solution}
 		<h3>Optimal route</h3>
 
@@ -48,8 +50,6 @@
 			{/each}
 		</ul>
 	{/if}
-
-	<Map route_definition={data.route_definition} {solution} />
 {:else}
 	Loading...
 {/if}

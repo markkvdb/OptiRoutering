@@ -29,8 +29,14 @@
 				customer.location.coordinates.lng
 			])
 		];
-		leafletMap.getMap().fitBounds(locations);
-		leafletMap.getMap().setMinZoom(leafletMap.getMap().getZoom());
+
+		let map: L.Map = leafletMap.getMap();
+
+		map.fitBounds(locations);
+		map.addOneTimeEventListener('zoomend', function () {
+			map.setMaxBounds(map.getBounds());
+			map.options.minZoom = map.getZoom();
+		});
 	});
 </script>
 

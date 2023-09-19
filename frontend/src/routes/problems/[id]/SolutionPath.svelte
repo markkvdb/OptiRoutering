@@ -1,15 +1,14 @@
 <script lang="ts">
 	import type { RouteDefinition } from '$lib/api/models/routes';
+	import type { Directions } from '@routingjs/core';
+	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import { Valhalla } from '@routingjs/valhalla';
 	import { GeoJSON } from 'svelte-leafletjs';
 
 	export let solution: number[] | undefined;
 	export let route_definition: RouteDefinition;
 
-	const path_geojson: GeoJSON.FeatureCollection<GeoJSON.LineString> = {
-		type: 'FeatureCollection',
-		features: []
-	};
+	let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
 
 	$: if (solution) {
 		const v = new Valhalla({
@@ -29,13 +28,13 @@
 			],
 			'auto'
 		).then((response) => {
-			path_geojson.features = response.directions.map((direction) => {
-				return direction.feature;
-			});
+			optimal_path = response;
 		});
 	}
 </script>
 
-{#if solution}
-	<GeoJSON data={path_geojson} />
+{#if optimal_path}
+	{#each optimal_path.directions as directions}
+		<GeoJSON data={directions.feature} />
+	{/each}
 {/if}

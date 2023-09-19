@@ -102,7 +102,7 @@
 	Customers:
 	<br />
 
-	{#each route_definition.customers as customer (customer.name)}
+	{#each route_definition.customers as customer, i}
 		<CustomerInput
 			{customer}
 			{syncCustomers}
