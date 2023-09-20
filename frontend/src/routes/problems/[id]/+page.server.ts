@@ -31,3 +31,4 @@ export async function load({ params, fetch }): Promise<ProblemPageData> {
         route_definition: route_definition.data,
     };
 }
+

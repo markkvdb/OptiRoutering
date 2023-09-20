@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createServerClient } from '$lib/api';
 	import Map from './Map.svelte';
 
 	export let data;
@@ -7,14 +6,12 @@
 	let solution: number[] | undefined = undefined;
 
 	const solveProblem = async () => {
-		const client = createServerClient(fetch);
-
-		const response = await client.POST('/routes/{id}/solve', {
-			params: { path: { id: data.route_definition.id } }
+		const response = await fetch(`/problems/${data.route_definition.id}/solve`, {
+			method: 'POST'
 		});
 
-		if (response.data) {
-			solution = response.data;
+		if (response.ok) {
+			solution = await response.json();
 		} else {
 			alert('Something went wrong: ' + response.error);
 		}
