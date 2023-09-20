@@ -13,9 +13,9 @@ from app.solver import create_problem_data
 app = FastAPI()
 
 origins = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-    "http://localhost"
+    "http://127.0.0.1:3000",
+    "http://web:3000",
+    "http://web"
 ]
 
 
