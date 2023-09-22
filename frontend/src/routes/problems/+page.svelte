@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let data;
+	import type { PageServerData } from './$types';
+
+	export let data: PageServerData;
 
 	function openPage(event: Event) {
 		const element = event.currentTarget as HTMLSelectElement;

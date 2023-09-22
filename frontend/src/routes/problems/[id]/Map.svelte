@@ -78,6 +78,5 @@
 	.map {
 		height: 500px;
 		width: 80%;
-		align: center;
 	}
 </style>
