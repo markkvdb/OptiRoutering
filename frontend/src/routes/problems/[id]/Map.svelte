@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { RouteDefinition } from '$lib/api/models/routes';
+	import type { LatLngTuple } from 'leaflet';
 	import { onMount } from 'svelte';
 	import { LeafletMap, Marker, Popup, TileLayer, Tooltip } from 'svelte-leafletjs';
 	import SolutionPath from './SolutionPath.svelte';
@@ -22,9 +23,9 @@
 	let leafletMap: LeafletMap;
 
 	onMount(() => {
-		const locations = [
+		const locations: LatLngTuple[] = [
 			[route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
-			...route_definition.customers.map((customer) => [
+			...route_definition.customers.map<[number, number]>((customer) => [
 				customer.location.coordinates.lat,
 				customer.location.coordinates.lng
 			])
