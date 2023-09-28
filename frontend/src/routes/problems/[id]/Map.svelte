@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { RouteDefinition } from '$lib/api/models/routes';
+	import type { Directions } from '@routingjs/core';
+	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import type { LatLngTuple } from 'leaflet';
 	import { onMount } from 'svelte';
 	import { LeafletMap, Marker, Popup, TileLayer, Tooltip } from 'svelte-leafletjs';
 	import SolutionPath from './SolutionPath.svelte';
 
 	export let route_definition: RouteDefinition;
-	export let solution: number[] | undefined = undefined;
+	export let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
 
 	const mapOptions = {
 		center: [route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
@@ -62,8 +64,8 @@
 			{/each}
 		{/if}
 
-		{#if solution}
-			<SolutionPath {solution} {route_definition} />
+		{#if optimal_path}
+			<SolutionPath {optimal_path} />
 		{/if}
 	</LeafletMap>
 </div>
