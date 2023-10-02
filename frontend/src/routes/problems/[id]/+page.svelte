@@ -2,7 +2,7 @@
 	import type { Directions } from '@routingjs/core';
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import { Valhalla } from '@routingjs/valhalla';
-	import { GeoJSON } from 'svelte-leafletjs';
+	import type { GeoJSON } from 'svelte-leafletjs';
 	import type { PageData } from './$types';
 	import Map from './Map.svelte';
 
@@ -43,6 +43,7 @@
 			'auto'
 		).then((response) => {
 			optimal_path = response;
+			console.log(optimal_path);
 		});
 	};
 </script>
@@ -58,6 +59,14 @@
 
 	{#if solution}
 		<h3>Optimal route</h3>
+
+		{#if optimal_path?.raw.trip}
+			<p>
+				Total distance: {Math.round(optimal_path.raw.trip.summary.length)} km
+				<br />
+				Total time: {Math.round(optimal_path.raw.trip.summary.time / 60)} minutes
+			</p>
+		{/if}
 
 		<ul>
 			{#each solution as customer_id}
