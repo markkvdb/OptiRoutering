@@ -8,6 +8,13 @@
       "when": 1695934289872,
       "tag": "0000_flaky_bulldozer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1696274591434,
+      "tag": "0001_colorful_chronomancer",
+      "breakpoints": true
     }
   ]
 }

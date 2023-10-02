@@ -7,7 +7,7 @@ import { db } from "$lib/server";
 import { updateUserSchema, users } from "$lib/server/schema";
 
 export const load: PageServerLoad = async ({ params }) => {
-    const user = (await db.select().from(users).where(eq(users.id, params.id)))[0];
+    const user = await db.query.users.findFirst({ where: eq(users.id, params.id) })
 
     if (!user) throw error(404, 'User not found.');
 
@@ -22,11 +22,11 @@ export const actions: Actions = {
         if (!form.valid) return fail(400, { form });
 
         // Find user
-        const user = (await db.select().from(users).where(eq(users.id, params.id)))[0]
+        const user = await db.query.users.findFirst({ where: eq(users.id, params.id) })
         if (!user) throw error(404, 'User not found.');
 
         // Update user
-        await db.update(users).set({ name: form.data.name }).where(eq(users.id, params.id));
+        await db.update(users).set(form.data).where(eq(users.id, params.id));
 
         return message(form, 'User updated!');
     }
