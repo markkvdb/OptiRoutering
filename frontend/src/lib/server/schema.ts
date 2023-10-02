@@ -5,6 +5,7 @@ import {
     sqliteTable,
     text,
 } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from 'drizzle-zod';
 
 export const users = sqliteTable("user", {
     id: text("id").notNull().primaryKey(),
@@ -13,6 +14,10 @@ export const users = sqliteTable("user", {
     emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
     image: text("image"),
 });
+
+const insertUserSchema = createInsertSchema(users);
+export const updateUserSchema = insertUserSchema.pick({ name: true })
+
 
 export const accounts = sqliteTable(
     "account",
