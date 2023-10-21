@@ -1,23 +1,10 @@
-import { fail } from '@sveltejs/kit';
+import { db } from "$lib/server";
+import { problemSchema, routingProblems, users } from '$lib/server/schema';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { eq } from "drizzle-orm";
 import { superValidate } from 'sveltekit-superforms/server';
-import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 import type { Actions, PageServerData } from './$types';
-
-const locationSchema = z.object({
-    address: z.string(),
-    coordinates: z.object({
-        lat: z.number(),
-        lng: z.number()
-    })
-});
-
-const problemSchema = z.object({
-    depot: locationSchema,
-    customers: z.object({
-        name: z.string(),
-        location: locationSchema,
-    }).array(),
-});
 
 export const load: PageServerData = async () => {
     const defaultForm = {
@@ -40,8 +27,17 @@ export const load: PageServerData = async () => {
 };
 
 export const actions: Actions = {
-    default: async ({ request, params }) => {
+    default: async ({ request, locals }) => {
         const form = await superValidate(request, problemSchema);
         if (!form.valid) return fail(400, { form });
+
+        const session = await locals.getSession();
+        if (!session?.user?.email) return error(400)
+
+        const user = await db.query.users.findFirst({ where: eq(users.email, session.user.email) })
+        if (!user) return error(400)
+
+        const id = await db.insert(routingProblems).values({ id: uuidv4(), userId: user?.id, problem: form.data }).returning({ id: routingProblems.id });
+        throw redirect(303, `/problems/${id}`)
     }
 };

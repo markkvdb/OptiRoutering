@@ -3,9 +3,9 @@
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import { GeoJSON } from 'svelte-leafletjs';
 
-	export let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse>;
+	export let optimalPath: Directions<ValhallaRouteResponse, ValhallaRouteResponse>;
 </script>
 
-{#each optimal_path.directions as directions}
+{#each optimalPath.directions as directions}
 	<GeoJSON data={directions.feature} />
 {/each}

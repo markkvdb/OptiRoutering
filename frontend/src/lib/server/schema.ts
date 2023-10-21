@@ -4,9 +4,10 @@ import {
     integer,
     primaryKey,
     sqliteTable,
-    text,
+    text
 } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const users = sqliteTable("user", {
     id: text("id").notNull().primaryKey(),
@@ -58,7 +59,28 @@ export const verificationTokens = sqliteTable("verificationToken", {
     })
 );
 
+export const locationSchema = z.object({
+    address: z.string(),
+    coordinates: z.object({
+        lat: z.number(),
+        lng: z.number()
+    })
+});
+
+export const problemSchema = z.object({
+    depot: locationSchema,
+    customers: z.object({
+        name: z.string(),
+        location: locationSchema,
+    }).array(),
+});
+
+export type ProblemData = z.infer<typeof problemSchema>;
+
 export const routingProblems = sqliteTable("routingProblem", {
-    id: text("id").notNull().primaryKey(),
-    problem: blob("problem").notNull()
+    id: blob("id").primaryKey(),
+    problem: text('problem', { mode: 'json' }).notNull().$type<ProblemData>(),
+    userId: text("userId")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" })
 });

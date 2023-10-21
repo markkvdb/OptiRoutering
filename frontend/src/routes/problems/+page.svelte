@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { PageServerData } from './$types';
 
 	export let data: PageServerData;
@@ -9,7 +10,7 @@
 
 		if (index == '') return;
 
-		window.location.href = `/problems/` + index;
+		goto(`/problems/${index}`);
 	}
 </script>
 
@@ -23,8 +24,8 @@ Select an existing route or create a new one:
 {:else}
 	<select on:change={openPage}>
 		<option value="" selected>Select a route definition</option>
-		{#each data.route_definitions as route_definition, i}
-			<option value={i}>{route_definition.depot.address}</option>
+		{#each data.route_definitions as route_definition}
+			<option value={route_definition.id}>{route_definition.problem.depot.address}</option>
 		{/each}
 	</select>
 {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RouteDefinition } from '$lib/api/models/routes';
+	import type { ProblemData } from '$lib/server/schema';
 	import type { Directions } from '@routingjs/core';
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import type { LatLngTuple } from 'leaflet';
@@ -7,11 +7,11 @@
 	import { LeafletMap, Marker, Popup, TileLayer, Tooltip } from 'svelte-leafletjs';
 	import SolutionPath from './SolutionPath.svelte';
 
-	export let route_definition: RouteDefinition;
-	export let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
+	export let problemData: ProblemData;
+	export let optimalPath: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
 
 	const mapOptions = {
-		center: [route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
+		center: [problemData.depot.coordinates.lat, problemData.depot.coordinates.lng],
 		zoom: 10
 	};
 	const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -26,8 +26,8 @@
 
 	onMount(() => {
 		const locations: LatLngTuple[] = [
-			[route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
-			...route_definition.customers.map<[number, number]>((customer) => [
+			[problemData.depot.coordinates.lat, problemData.depot.coordinates.lng],
+			...problemData.customers.map<[number, number]>((customer) => [
 				customer.location.coordinates.lat,
 				customer.location.coordinates.lng
 			])
@@ -47,14 +47,12 @@
 	<LeafletMap bind:this={leafletMap} options={mapOptions}>
 		<TileLayer url={tileUrl} options={tileLayerOptions} />
 
-		{#if route_definition}
-			{#if route_definition.depot.coordinates}
-				<Marker
-					latLng={[route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng]}
-				/>
+		{#if problemData}
+			{#if problemData.depot.coordinates}
+				<Marker latLng={[problemData.depot.coordinates.lat, problemData.depot.coordinates.lng]} />
 			{/if}
 
-			{#each route_definition.customers as customer}
+			{#each problemData.customers as customer}
 				{#if customer.location.coordinates}
 					<Marker latLng={[customer.location.coordinates.lat, customer.location.coordinates.lng]}>
 						<Popup>{customer.name} - {customer.location.address}</Popup>
@@ -64,8 +62,8 @@
 			{/each}
 		{/if}
 
-		{#if optimal_path}
-			<SolutionPath {optimal_path} />
+		{#if optimalPath}
+			<SolutionPath {optimalPath} />
 		{/if}
 	</LeafletMap>
 </div>

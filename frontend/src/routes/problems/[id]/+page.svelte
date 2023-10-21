@@ -9,15 +9,31 @@
 	export let data: PageData;
 
 	let solution: number[] | undefined = undefined;
-	let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
+	let optimalPath: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
+
+	async function solveProblem(event: { currentTarget: EventTarget & HTMLFormElement }) {
+		const data = new FormData(event.currentTarget);
+
+		const response = await fetch(event.currentTarget.action, {
+			method: 'POST',
+			body: data
+		});
+
+		const result = await response.json();
+
+		if (result.type === 'success') {
+			// rerun all `load` functions, following the successful update
+			await invalidateAll();
+		}
+	}
 
 	const solveProblem = async () => {
-		const response = await fetch(`/problems/${data.route_definition.id}/solve`, {
+		const response = await fetch(`/problems/${data.routing_problem.id}/solve`, {
 			method: 'POST'
 		});
 
 		if (!response.ok) {
-			alert('Something went wrong: ' + response.error);
+			alert('Something went wrong: ' + response.error());
 			return;
 		}
 
@@ -30,28 +46,32 @@
 		});
 		v.directions(
 			[
-				[data.route_definition.depot.coordinates.lat, data.route_definition.depot.coordinates.lng],
+				[
+					data.routing_problem.problem.depot.coordinates.lat,
+					data.routing_problem.problem.depot.coordinates.lng
+				],
 				...solution.map(
 					(customer_id) =>
 						[
-							data.route_definition.customers[customer_id - 1].location.coordinates.lat,
-							data.route_definition.customers[customer_id - 1].location.coordinates.lng
+							data.routing_problem.problem.customers[customer_id - 1].location.coordinates.lat,
+							data.routing_problem.problem.customers[customer_id - 1].location.coordinates.lng
 						] as GeoJSON.Position
 				),
-				[data.route_definition.depot.coordinates.lat, data.route_definition.depot.coordinates.lng]
+				[
+					data.routing_problem.problem.depot.coordinates.lat,
+					data.routing_problem.problem.depot.coordinates.lng
+				]
 			],
 			'auto'
 		).then((response) => {
-			optimal_path = response;
-			console.log(optimal_path);
+			optimalPath = response;
+			console.log(optimalPath);
 		});
 	};
 </script>
 
-{#if data.route_definition}
-	<h2>{data.route_definition.depot.address}</h2>
-
-	<Map route_definition={data.route_definition} {optimal_path} />
+{#if data.routing_problem}
+	<Map problemData={data.routing_problem.problem} {optimalPath} />
 
 	<br />
 
@@ -60,18 +80,18 @@
 	{#if solution}
 		<h3>Optimal route</h3>
 
-		{#if optimal_path?.raw.trip}
+		{#if optimalPath?.raw.trip}
 			<p>
-				Total distance: {Math.round(optimal_path.raw.trip.summary.length)} km
+				Total distance: {Math.round(optimalPath.raw.trip.summary.length)} km
 				<br />
-				Total time: {Math.round(optimal_path.raw.trip.summary.time / 60)} minutes
+				Total time: {Math.round(optimalPath.raw.trip.summary.time / 60)} minutes
 			</p>
 		{/if}
 
 		<ul>
 			{#each solution as customer_id}
-				{#if data.route_definition.customers[customer_id - 1]}
-					<li>{data.route_definition.customers[customer_id - 1]?.name}</li>
+				{#if data.routing_problem.problem.customers[customer_id - 1]}
+					<li>{data.routing_problem.problem.customers[customer_id - 1]?.name}</li>
 				{/if}
 			{/each}
 		</ul>
