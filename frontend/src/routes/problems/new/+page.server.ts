@@ -37,7 +37,8 @@ export const actions: Actions = {
         const user = await db.query.users.findFirst({ where: eq(users.email, session.user.email) })
         if (!user) return error(400)
 
-        const id = await db.insert(routingProblems).values({ id: uuidv4(), userId: user?.id, problem: form.data }).returning({ id: routingProblems.id });
-        throw redirect(303, `/problems/${id}`)
+        const problems = await db.insert(routingProblems).values({ id: uuidv4(), userId: user?.id, problem: form.data }).returning({ id: routingProblems.id });
+
+        throw redirect(303, `/problems/${problems[0]?.id}`)
     }
 };

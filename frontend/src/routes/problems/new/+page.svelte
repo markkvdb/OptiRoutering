@@ -98,8 +98,22 @@
 		</div>
 	{/each}
 
-	<button>Submit</button>
+	<!-- Add customer -->
+	<button
+		type="button"
+		on:click={() =>
+			form.update(
+				($form) => {
+					$form.customers.push({ name: '', location: { address: '', coordinates: null } });
+					return $form;
+				},
+				{ taint: false }
+			)}>Add customer</button
+	>
+
 	{#if $delayed}Working...{/if}
+
+	<button type="submit">Submit</button>
 </form>
 
 <style>

@@ -17,7 +17,7 @@ export const load: PageServerData = async ({ params }) => {
 }
 
 export const actions = {
-    solve: async ({ params }) => {
+    solve: async ({ params, fetch }) => {
         const routingProblem = await db.query.routingProblems.findFirst({ where: eq(routingProblems.id, params.id) })
         if (!routingProblem) throw error(404, "Problem not found")
 
@@ -31,8 +31,7 @@ export const actions = {
         }
 
         return {
-            body: response.data,
-            status: 200
+            solution: response.data
         };
     }
 } satisfies Actions;
