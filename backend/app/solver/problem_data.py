@@ -3,10 +3,10 @@ import numpy as np
 from pyvrp import Client, ProblemData, VehicleType
 from routingpy import Valhalla
 
-from app.models import Customer, Depot, RouteDefinition
+from app.models import BaseRouteDefinition, Customer, Depot
 
 
-def create_problem_data(route_definition: RouteDefinition, coordinate_precision: int = 5) -> ProblemData:
+def create_problem_data(route_definition: BaseRouteDefinition, coordinate_precision: int = 5) -> ProblemData:
     """Create the problem data for the given route definition."""
     distance_matrix, duration_matrix = get_distance_matrices(route_definition, Valhalla())
     clients = [location_to_client(route_definition.depot, coordinate_precision)] + [location_to_client(customer, coordinate_precision) for customer in route_definition.customers]
@@ -18,7 +18,7 @@ def create_problem_data(route_definition: RouteDefinition, coordinate_precision:
         duration_matrix=duration_matrix,
     )
 
-def get_distance_matrices(route_definition: RouteDefinition, client: Valhalla) -> tuple[np.ndarray, np.ndarray]:
+def get_distance_matrices(route_definition: BaseRouteDefinition, client: Valhalla) -> tuple[np.ndarray, np.ndarray]:
     """Get the distance matrices for the given route definition."""
     coords = [route_definition.depot.coordinates] + [customer.location.coordinates for customer in route_definition.customers]
     matrix = client.matrix(locations=[[coord.lng, coord.lat] for coord in coords], profile="auto")

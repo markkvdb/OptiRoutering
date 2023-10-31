@@ -31,6 +31,3 @@ class BaseRouteDefinition(BaseModel):
 
 class RouteDefinitionRequest(BaseRouteDefinition):
     pass
-
-class RouteDefinition(BaseRouteDefinition):
-    id: int

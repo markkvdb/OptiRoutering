@@ -1,17 +1,18 @@
 <script lang="ts">
-	import type { RouteDefinition } from '$lib/api/models/routes';
+	import { browser } from '$app/environment';
+	import type { ProblemData } from '$lib/server/schema';
 	import type { Directions } from '@routingjs/core';
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
-	import type { LatLngTuple } from 'leaflet';
-	import { onMount } from 'svelte';
-	import { LeafletMap, Marker, Popup, TileLayer, Tooltip } from 'svelte-leafletjs';
+	import type { LeafletMap } from 'svelte-leafletjs';
 	import SolutionPath from './SolutionPath.svelte';
 
-	export let route_definition: RouteDefinition;
-	export let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
+	const svelteLeafletJS = browser ? import('svelte-leafletjs') : new Promise(() => {});
+
+	export let problemData: ProblemData;
+	export let optimalPath: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
 
 	const mapOptions = {
-		center: [route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
+		center: [problemData.depot.coordinates.lat, problemData.depot.coordinates.lng],
 		zoom: 10
 	};
 	const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -23,51 +24,41 @@
 	};
 
 	let leafletMap: LeafletMap;
-
-	onMount(() => {
-		const locations: LatLngTuple[] = [
-			[route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng],
-			...route_definition.customers.map<[number, number]>((customer) => [
-				customer.location.coordinates.lat,
-				customer.location.coordinates.lng
-			])
-		];
-
-		let map: L.Map = leafletMap.getMap();
-
-		map.fitBounds(locations);
-		map.addOneTimeEventListener('zoomend', function () {
-			map.setMaxBounds(map.getBounds());
-			map.options.minZoom = map.getZoom();
-		});
-	});
 </script>
 
 <div class="map">
-	<LeafletMap bind:this={leafletMap} options={mapOptions}>
-		<TileLayer url={tileUrl} options={tileLayerOptions} />
+	{#await svelteLeafletJS}
+		<p>Loading...</p>
+	{:then Leaflet}
+		<Leaflet.LeafletMap bind:this={leafletMap} options={mapOptions}>
+			<Leaflet.TileLayer url={tileUrl} options={tileLayerOptions} />
 
-		{#if route_definition}
-			{#if route_definition.depot.coordinates}
-				<Marker
-					latLng={[route_definition.depot.coordinates.lat, route_definition.depot.coordinates.lng]}
-				/>
+			{#if problemData}
+				{#if problemData.depot.coordinates}
+					<Leaflet.Marker
+						latLng={[problemData.depot.coordinates.lat, problemData.depot.coordinates.lng]}
+					/>
+				{/if}
+
+				{#each problemData.customers as customer}
+					{#if customer.location.coordinates}
+						<Leaflet.Marker
+							latLng={[customer.location.coordinates.lat, customer.location.coordinates.lng]}
+						>
+							<Leaflet.Popup>{customer.name} - {customer.location.address}</Leaflet.Popup>
+							<Leaflet.Tooltip>{customer.name}</Leaflet.Tooltip>
+						</Leaflet.Marker>
+					{/if}
+				{/each}
 			{/if}
 
-			{#each route_definition.customers as customer}
-				{#if customer.location.coordinates}
-					<Marker latLng={[customer.location.coordinates.lat, customer.location.coordinates.lng]}>
-						<Popup>{customer.name} - {customer.location.address}</Popup>
-						<Tooltip>{customer.name}</Tooltip>
-					</Marker>
-				{/if}
-			{/each}
-		{/if}
-
-		{#if optimal_path}
-			<SolutionPath {optimal_path} />
-		{/if}
-	</LeafletMap>
+			{#if optimalPath}
+				<SolutionPath {optimalPath} />
+			{/if}
+		</Leaflet.LeafletMap>
+	{:catch error}
+		<p>Something went wrong: {error.message}</p>
+	{/await}
 </div>
 
 <link

@@ -5,31 +5,12 @@
 
 
 export interface paths {
-  "/routes": {
-    /**
-     * Routes
-     * @description Get all route definitions.
-     */
-    get: operations["routes_routes_get"];
-    /**
-     * Route
-     * @description Calculate the optimal route for the given route definition.
-     */
-    post: operations["route_routes_post"];
-  };
-  "/routes/{id}": {
-    /**
-     * Route
-     * @description Get the route definition for the given route id.
-     */
-    get: operations["route_routes__id__get"];
-  };
-  "/routes/{id}/solve": {
+  "/solve": {
     /**
      * Solve
      * @description Solve and return order of customers to visit.
      */
-    post: operations["solve_routes__id__solve_post"];
+    post: operations["solve_solve_post"];
   };
 }
 
@@ -45,7 +26,7 @@ export interface components {
       lng: number;
     };
     /** Customer */
-    "Customer-Input": {
+    Customer: {
       /** Name */
       name: string;
       location: components["schemas"]["Location"];
@@ -55,18 +36,6 @@ export interface components {
       earliest_time?: string | null;
       /** Latest Time */
       latest_time?: string | null;
-    };
-    /** Customer */
-    "Customer-Output": {
-      /** Name */
-      name: string;
-      location: components["schemas"]["Location"];
-      /** Demand */
-      demand: number | null;
-      /** Earliest Time */
-      earliest_time: string | null;
-      /** Latest Time */
-      latest_time: string | null;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -79,26 +48,11 @@ export interface components {
       address: string;
       coordinates: components["schemas"]["Coordinates"];
     };
-    /** RouteDefinition */
-    RouteDefinition: {
-      depot: components["schemas"]["Location"];
-      /** Customers */
-      customers: components["schemas"]["Customer-Output"][];
-      /** Maximum Capacity */
-      maximum_capacity: number | null;
-      /**
-       * Time Windows
-       * @default false
-       */
-      time_windows: boolean;
-      /** Id */
-      id: number;
-    };
     /** RouteDefinitionRequest */
     RouteDefinitionRequest: {
       depot: components["schemas"]["Location"];
       /** Customers */
-      customers: components["schemas"]["Customer-Input"][];
+      customers: components["schemas"]["Customer"][];
       /** Maximum Capacity */
       maximum_capacity?: number | null;
       /**
@@ -131,80 +85,13 @@ export type external = Record<string, never>;
 export interface operations {
 
   /**
-   * Routes
-   * @description Get all route definitions.
-   */
-  routes_routes_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RouteDefinition"][];
-        };
-      };
-    };
-  };
-  /**
-   * Route
-   * @description Calculate the optimal route for the given route definition.
-   */
-  route_routes_post: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["RouteDefinitionRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RouteDefinition"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Route
-   * @description Get the route definition for the given route id.
-   */
-  route_routes__id__get: {
-    parameters: {
-      path: {
-        id: number;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RouteDefinition"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
    * Solve
    * @description Solve and return order of customers to visit.
    */
-  solve_routes__id__solve_post: {
-    parameters: {
-      query?: {
-        max_runtime?: number;
-      };
-      path: {
-        id: number;
+  solve_solve_post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RouteDefinitionRequest"];
       };
     };
     responses: {

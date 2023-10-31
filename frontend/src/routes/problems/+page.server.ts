@@ -1,19 +1,20 @@
-import { createServerClient } from '$lib/api';
-import type { components } from '$lib/api/v1';
+import { db } from "$lib/server";
+import { routingProblems, users } from '$lib/server/schema';
+import { error } from '@sveltejs/kit';
+import { eq } from "drizzle-orm";
+import type { PageServerData } from "./$types";
 
-interface ProblemPageData {
-    route_definitions: components["schemas"]["RouteDefinition"][] | undefined;
-}
 
-export async function load({ fetch }): Promise<ProblemPageData> {
-    const client = createServerClient(fetch);
-    const route_definitions = await client.GET("/routes", {});
+export const load: PageServerData = async ({ locals }) => {
+    const session = await locals.getSession();
+    if (!session?.user?.email) return error(400)
 
-    if (route_definitions.response.status === 500) {
-        throw new Error("Unknown error");
-    }
+    const user = await db.query.users.findFirst({ where: eq(users.email, session.user.email) })
+    if (!user) return error(404, "User not found")
+
+    const route_definitions = await db.query.routingProblems.findMany({ where: eq(routingProblems.userId, user.id) })
 
     return {
-        route_definitions: route_definitions.data,
+        route_definitions: route_definitions,
     };
 }

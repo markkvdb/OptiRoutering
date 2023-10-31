@@ -1,68 +1,72 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { Directions } from '@routingjs/core';
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import { Valhalla } from '@routingjs/valhalla';
-	import { GeoJSON } from 'svelte-leafletjs';
-	import type { PageData } from './$types';
+	import type { GeoJSON } from 'svelte-leafletjs';
+	import type { ActionData, PageData } from './$types';
 	import Map from './Map.svelte';
 
 	export let data: PageData;
+	export let form: ActionData;
 
-	let solution: number[] | undefined = undefined;
-	let optimal_path: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
-
-	const solveProblem = async () => {
-		const response = await fetch(`/problems/${data.route_definition.id}/solve`, {
-			method: 'POST'
-		});
-
-		if (!response.ok) {
-			alert('Something went wrong: ' + response.error);
-			return;
+	$: {
+		if (form && form.solution) {
+			// find directions
+			const v = new Valhalla({
+				userAgent: null
+			});
+			v.directions(
+				[
+					[
+						data.routing_problem.problem.depot.coordinates.lat,
+						data.routing_problem.problem.depot.coordinates.lng
+					],
+					...form.solution.map(
+						(customer_id) =>
+							[
+								data.routing_problem.problem.customers[customer_id - 1].location.coordinates.lat,
+								data.routing_problem.problem.customers[customer_id - 1].location.coordinates.lng
+							] as GeoJSON.Position
+					),
+					[
+						data.routing_problem.problem.depot.coordinates.lat,
+						data.routing_problem.problem.depot.coordinates.lng
+					]
+				],
+				'auto'
+			).then((response) => {
+				optimalPath = response;
+			});
 		}
-
-		// get optimal route
-		solution = await response.json();
-
-		// find directions
-		const v = new Valhalla({
-			userAgent: null
-		});
-		v.directions(
-			[
-				[data.route_definition.depot.coordinates.lat, data.route_definition.depot.coordinates.lng],
-				...solution.map(
-					(customer_id) =>
-						[
-							data.route_definition.customers[customer_id - 1].location.coordinates.lat,
-							data.route_definition.customers[customer_id - 1].location.coordinates.lng
-						] as GeoJSON.Position
-				),
-				[data.route_definition.depot.coordinates.lat, data.route_definition.depot.coordinates.lng]
-			],
-			'auto'
-		).then((response) => {
-			optimal_path = response;
-		});
-	};
+	}
+	let optimalPath: Directions<ValhallaRouteResponse, ValhallaRouteResponse> | undefined;
 </script>
 
-{#if data.route_definition}
-	<h2>{data.route_definition.depot.address}</h2>
-
-	<Map route_definition={data.route_definition} {optimal_path} />
+{#if data.routing_problem}
+	<Map problemData={data.routing_problem.problem} {optimalPath} />
 
 	<br />
 
-	<button on:click={() => solveProblem()}>Solve</button>
+	<form method="POST" action="?/solve" use:enhance>
+		<button type="submit">Solve</button>
+	</form>
 
-	{#if solution}
+	{#if form && optimalPath}
 		<h3>Optimal route</h3>
 
+		{#if optimalPath?.raw.trip}
+			<p>
+				Total distance: {Math.round(optimalPath.raw.trip.summary.length)} km
+				<br />
+				Total time: {Math.round(optimalPath.raw.trip.summary.time / 60)} minutes
+			</p>
+		{/if}
+
 		<ul>
-			{#each solution as customer_id}
-				{#if data.route_definition.customers[customer_id - 1]}
-					<li>{data.route_definition.customers[customer_id - 1]?.name}</li>
+			{#each form.solution as customer_id}
+				{#if data.routing_problem.problem.customers[customer_id - 1]}
+					<li>{data.routing_problem.problem.customers[customer_id - 1]?.name}</li>
 				{/if}
 			{/each}
 		</ul>
