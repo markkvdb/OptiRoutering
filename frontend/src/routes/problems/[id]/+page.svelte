@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { enhance } from '$app/forms';
 	import type { Directions } from '@routingjs/core';
 	import type { ValhallaRouteResponse } from '@routingjs/valhalla';
 	import { Valhalla } from '@routingjs/valhalla';
@@ -11,7 +11,6 @@
 	export let form: ActionData;
 
 	$: {
-		console.log(form?.solution);
 		if (form && form.solution) {
 			// find directions
 			const v = new Valhalla({
@@ -23,7 +22,7 @@
 						data.routing_problem.problem.depot.coordinates.lat,
 						data.routing_problem.problem.depot.coordinates.lng
 					],
-					...form.body.map(
+					...form.solution.map(
 						(customer_id) =>
 							[
 								data.routing_problem.problem.customers[customer_id - 1].location.coordinates.lat,
@@ -38,7 +37,6 @@
 				'auto'
 			).then((response) => {
 				optimalPath = response;
-				console.log(optimalPath);
 			});
 		}
 	}
@@ -46,13 +44,11 @@
 </script>
 
 {#if data.routing_problem}
-	{#if browser}
-		<Map problemData={data.routing_problem.problem} {optimalPath} />
-	{/if}
+	<Map problemData={data.routing_problem.problem} {optimalPath} />
 
 	<br />
 
-	<form method="POST" action="?/solve">
+	<form method="POST" action="?/solve" use:enhance>
 		<button type="submit">Solve</button>
 	</form>
 
@@ -68,7 +64,7 @@
 		{/if}
 
 		<ul>
-			{#each form.body as customer_id}
+			{#each form.solution as customer_id}
 				{#if data.routing_problem.problem.customers[customer_id - 1]}
 					<li>{data.routing_problem.problem.customers[customer_id - 1]?.name}</li>
 				{/if}

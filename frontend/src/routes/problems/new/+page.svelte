@@ -11,8 +11,6 @@
 		dataType: 'json'
 	});
 
-	console.log($errors);
-
 	async function findCoordinates(event: FocusEvent) {
 		const element = event.currentTarget as HTMLInputElement;
 		let address = element.value;
