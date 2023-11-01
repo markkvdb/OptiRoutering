@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { signIn, signOut } from '@auth/sveltekit/client';
+	import { signOut } from '@auth/sveltekit/client';
 </script>
 
 <h1>OptiRoutering</h1>
@@ -17,7 +17,7 @@
 		<button on:click={() => signOut()} class="button">Sign out</button>
 	{:else}
 		<span class="notSignedInText">You are not signed in</span>
-		<button on:click={() => signIn('email')}>Sign In</button>
+		<a href="/auth/signin"><button type="button">Sign in</button></a>
 	{/if}
 </p>
 
