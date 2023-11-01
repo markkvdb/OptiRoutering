@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { geolocate } from '$lib/geolocating';
 	import { superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -28,9 +27,6 @@
 {/if}
 
 <h2>Create route problem</h2>
-
-<SuperDebug data={$form} /><br />
-<SuperDebug data={$errors} /><br />
 
 <form method="POST" use:enhance>
 	<label>
