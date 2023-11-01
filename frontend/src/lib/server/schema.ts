@@ -82,5 +82,5 @@ export const routingProblems = sqliteTable("routingProblem", {
     problem: text('problem', { mode: 'json' }).notNull().$type<ProblemData>(),
     userId: text("userId")
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" })
+        .references(() => users.id, { onDelete: "cascade" }),
 });

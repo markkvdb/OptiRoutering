@@ -22,13 +22,6 @@
       "when": 1696402721211,
       "tag": "0002_breezy_greymalkin",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1696888132102,
-      "tag": "0003_uneven_punisher",
-      "breakpoints": true
     }
   ]
 }

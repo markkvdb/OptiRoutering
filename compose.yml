@@ -9,9 +9,9 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`optiroutering.mvanderbroek.com`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=le"
+      - "traefik.http.routers.web.rule=Host(`optiroutering.mvanderbroek.com`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=le"
       - "traefik.http.services.web.loadbalancer.server.port=3000"
 
   backend:
