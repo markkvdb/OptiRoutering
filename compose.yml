@@ -5,10 +5,35 @@ services:
     build: ./frontend
     environment:
       - BACKEND_URL=http://backend
-    ports:
-      - 3000:3000
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`optiroutering.mvanderbroek.com`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=le"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"
 
   backend:
     build: ./backend
     expose:
       - 80
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+      - "--certificatesresolvers.le.acme.email=optiroutering@mvanderbroek.com"
+      - "--certificatesresolvers.le.acme.storage=/certificates/acme.json"
+    ports:
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "traefik-public-certificates:/certificates"
+
+volumes:
+  traefik-public-certificates:
