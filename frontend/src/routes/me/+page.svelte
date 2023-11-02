@@ -12,7 +12,7 @@
 	<h3 class:invalid={$page.status >= 400}>{$message}</h3>
 {/if}
 
-<h2>Update user</h2>
+<h2>Profile</h2>
 
 <form method="POST" use:enhance>
 	<label>

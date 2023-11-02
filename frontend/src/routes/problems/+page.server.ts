@@ -7,8 +7,6 @@ import type { PageServerData } from "./$types";
 
 export const load: PageServerData = async ({ locals }) => {
     const session = await locals.getSession();
-    if (!session?.user?.email) return error(400)
-
     const user = await db.query.users.findFirst({ where: eq(users.email, session.user.email) })
     if (!user) return error(404, "User not found")
 

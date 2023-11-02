@@ -12,7 +12,7 @@
 		{/if}
 		<span class="signedInText">
 			<small>Signed in as</small><br />
-			<strong>{$page.data.session.user?.name ?? 'User'}</strong>
+			<strong>{$page.data.session.user?.name ?? 'Anonymous'}</strong>
 		</span>
 		<button on:click={() => signOut()} class="button">Sign out</button>
 	{:else}
@@ -27,6 +27,7 @@
 	<nav>
 		<a href="/">Home</a>
 		<a href="/problems">Problems</a>
+		<a href="/me">Profile</a>
 	</nav>
 {/if}
 
