@@ -12,6 +12,7 @@ RUN npm ci
 
 # Copy project and build
 COPY . ./
+RUN mkdir ./data
 RUN npm run build
 RUN npm prune --production
 
