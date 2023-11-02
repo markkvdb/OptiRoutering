@@ -1,34 +1,54 @@
 <script>
 	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
+	import '../app.css';
 </script>
 
-<h1>OptiRoutering</h1>
-
-<p>
-	{#if $page.data.session}
-		{#if $page.data.session.user?.image}
-			<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
+<nav class="navbar bg-base-100">
+	<div class="navbar-start">
+		<div class="dropdown">
+			<label tabindex="0" class="btn btn-ghost lg:hidden">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					><path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h8m-8 6h16"
+					/></svg
+				>
+			</label>
+			<ul
+				tabindex="0"
+				class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+			>
+				<li><a href="/">Home</a></li>
+				<li><a href="/problems">Problems</a></li>
+				<li><a href="/me">Profile</a></li>
+			</ul>
+		</div>
+		<a class="btn btn-ghost normal-case text-xl">OptiRoutering</a>
+	</div>
+	<div class="navbar-center hidden lg:flex">
+		<ul class="menu menu-horizontal px-1">
+			<li><a href="/">Home</a></li>
+			<li><a href="/problems">Problems</a></li>
+			<li><a href="/me">Profile</a></li>
+		</ul>
+	</div>
+	<div class="navbar-end">
+		{#if $page.data.session}
+			<button on:click={() => signOut()} class="button">Sign out</button>
+		{:else}
+			<a href="/auth/signin"><button type="button">Sign in</button></a>
 		{/if}
-		<span class="signedInText">
-			<small>Signed in as</small><br />
-			<strong>{$page.data.session.user?.name ?? 'Anonymous'}</strong>
-		</span>
-		<button on:click={() => signOut()} class="button">Sign out</button>
-	{:else}
-		<span class="notSignedInText">You are not signed in</span>
-		<a href="/auth/signin"><button type="button">Sign in</button></a>
-	{/if}
-</p>
+	</div>
+</nav>
 
-<!-- menu if logged in -->
-
-{#if $page.data.session}
-	<nav>
-		<a href="/">Home</a>
-		<a href="/problems">Problems</a>
-		<a href="/me">Profile</a>
-	</nav>
-{/if}
-
-<slot />
+<div class="container mx-auto">
+	<slot />
+</div>

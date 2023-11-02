@@ -10,6 +10,9 @@
 	export let data: PageData;
 	export let form: ActionData;
 
+	// get user location from geolocation API
+	let userLocation: GeoJSON.Position | undefined;
+
 	$: {
 		if (form && form.solution) {
 			// find directions
@@ -49,27 +52,59 @@
 	<br />
 
 	<form method="POST" action="?/solve" use:enhance>
-		<button type="submit">Solve</button>
+		<button type="submit" class="btn btn-primary">Solve</button>
 	</form>
 
 	{#if form && optimalPath}
-		<h3>Optimal route</h3>
+		<div class="mt-4">
+			<h3 class="text-lg font-medium">Optimal route</h3>
 
-		{#if optimalPath?.raw.trip}
-			<p>
-				Total distance: {Math.round(optimalPath.raw.trip.summary.length)} km
-				<br />
-				Total time: {Math.round(optimalPath.raw.trip.summary.time / 60)} minutes
-			</p>
-		{/if}
+			{#if optimalPath?.raw.trip}
+				<div class="stats shadow my-4">
+					<div class="stat">
+						<div class="stat-title">Total distance</div>
+						<div class="stat-value text-primary">
+							{Math.round(optimalPath.raw.trip.summary.length)} km
+						</div>
+					</div>
 
-		<ul>
-			{#each form.solution as customer_id}
-				{#if data.routing_problem.problem.customers[customer_id - 1]}
-					<li>{data.routing_problem.problem.customers[customer_id - 1]?.name}</li>
-				{/if}
-			{/each}
-		</ul>
+					<div class="stat">
+						<div class="stat-title">Total time</div>
+						<div class="stat-value text-primary">
+							{Math.round(optimalPath.raw.trip.summary.time / 60)} minutes
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<div class="overflow-x-auto mb-4">
+				<table class="table">
+					<!-- head -->
+					<thead>
+						<tr>
+							<th>Stop</th>
+							<th>Name</th>
+							<th>Address</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<!-- row 1 -->
+						{#each form.solution as customer_id, i}
+							{#if data.routing_problem.problem.customers[customer_id - 1]}
+								<tr>
+									<th>{i + 1}</th>
+									<td>{data.routing_problem.problem.customers[customer_id - 1]?.name}</td>
+									<td
+										>{data.routing_problem.problem.customers[customer_id - 1]?.location.address}</td
+									>
+								</tr>
+							{/if}
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</div>
 	{/if}
 {:else}
 	Loading...

@@ -12,21 +12,24 @@
 	<h3 class:invalid={$page.status >= 400}>{$message}</h3>
 {/if}
 
-<h2>Profile</h2>
+<h2 class="text-lg font-bold">Profile</h2>
 
 <form method="POST" use:enhance>
-	<label>
-		Name<br />
+	<div>
+		<label class="label" for="name">
+			<span class="label-text">Name</span>
+		</label>
 		<input
 			name="name"
+			class="input input-bordered w-full max-w-xs"
 			aria-invalid={$errors.name ? 'true' : undefined}
 			bind:value={$form.name}
 			{...$constraints.name}
 		/>
 		{#if $errors.name}<span class="invalid">{$errors.name}</span>{/if}
-	</label>
+	</div>
 
-	<button>Submit</button>
+	<button class="btn btn-primary my-4">Submit</button>
 	{#if $delayed}Working...{/if}
 </form>
 
