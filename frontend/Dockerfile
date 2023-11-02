@@ -14,7 +14,7 @@ RUN npm ci
 COPY . ./
 RUN mkdir ./data
 RUN npm run build
-RUN npm prune --production
+RUN npm prune --omit=dev
 
 # Run stage
 FROM node:18-alpine
