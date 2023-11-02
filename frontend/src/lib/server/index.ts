@@ -6,6 +6,6 @@ import * as schema from './schema';
 const sqlite = new Database('sqlite.db');
 export const db = drizzle(sqlite, { schema });
 
-await migrate(db, {
+void migrate(db, {
     migrationsFolder: 'drizzle',
 });

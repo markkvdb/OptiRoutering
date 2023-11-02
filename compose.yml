@@ -13,6 +13,8 @@ services:
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=le"
       - "traefik.http.services.web.loadbalancer.server.port=3000"
+    volumes:
+      - "web-db:/app/sqlite.db"
 
   backend:
     build: ./backend
@@ -37,3 +39,4 @@ services:
 
 volumes:
   traefik-public-certificates:
+  web-db:
