@@ -25,8 +25,9 @@ WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
 
-# Copy migration files
+# Copy migration files and create data folder
 COPY --from=builder /app/drizzle drizzle/
+RUN mkdir ./data
 
 COPY package.json ./
 

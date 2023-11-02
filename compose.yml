@@ -14,7 +14,7 @@ services:
       - "traefik.http.routers.web.tls.certresolver=le"
       - "traefik.http.services.web.loadbalancer.server.port=3000"
     volumes:
-      - "web-db:/app/sqlite.db"
+      - "web-db:./data"
 
   backend:
     build: ./backend
