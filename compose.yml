@@ -14,7 +14,7 @@ services:
       - "traefik.http.routers.web.tls.certresolver=le"
       - "traefik.http.services.web.loadbalancer.server.port=3000"
     volumes:
-      - "web-db:./data"
+      - "web-db:/app/data"
 
   backend:
     build: ./backend
