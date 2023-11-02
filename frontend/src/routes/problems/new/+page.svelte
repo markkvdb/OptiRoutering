@@ -54,7 +54,7 @@
 		/>
 		{#if $form?.depot?.coordinates}
 			✅
-		{:else}
+		{:else if $form?.depot?.address}
 			❌
 		{/if}
 	</label>
@@ -85,7 +85,7 @@
 			/>
 			{#if $form.customers[i].location.coordinates}
 				✅
-			{:else}
+			{:else if $form.customers[i].location.address}
 				❌
 			{/if}
 			<br />
@@ -102,12 +102,15 @@
 					return $form;
 				},
 				{ taint: false }
-			)}>Add customer</button
+			)}
 	>
+		Add customer
+	</button>
 
-	{#if $delayed}Working...{/if}
+	<br />
 
 	<button type="submit">Submit</button>
+	{#if $delayed}Working...{/if}
 </form>
 
 <style>

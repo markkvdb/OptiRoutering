@@ -21,4 +21,13 @@
 	{/if}
 </p>
 
+<!-- menu if logged in -->
+
+{#if $page.data.session}
+	<nav>
+		<a href="/">Home</a>
+		<a href="/problems">Problems</a>
+	</nav>
+{/if}
+
 <slot />
