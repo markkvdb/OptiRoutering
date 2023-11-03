@@ -26,16 +26,14 @@
 				tabindex="0"
 				class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 			>
-				<li><a href="/">Home</a></li>
 				<li><a href="/problems">Problems</a></li>
 				<li><a href="/me">Profile</a></li>
 			</ul>
 		</div>
-		<a class="btn btn-ghost normal-case text-xl">OptiRoutering</a>
+		<a class="btn btn-ghost normal-case text-xl" href="/">OptiRoutering</a>
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
-			<li><a href="/">Home</a></li>
 			<li><a href="/problems">Problems</a></li>
 			<li><a href="/me">Profile</a></li>
 		</ul>
