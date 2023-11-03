@@ -13,7 +13,7 @@
 			{#if $page.data.session}
 				<a href="/problems"><button class="btn btn-primary">Get Started</button></a>
 			{:else}
-				<a href="/auth/sigin"><button class="btn btn-primary">Get Started</button></a>
+				<a href="/auth/signin"><button class="btn btn-primary">Get Started</button></a>
 			{/if}
 		</div>
 	</div>
