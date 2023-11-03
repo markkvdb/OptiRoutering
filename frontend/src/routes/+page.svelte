@@ -1,3 +1,7 @@
+<script>
+	import { page } from '$app/stores';
+</script>
+
 <div class="hero min-h-screen bg-base-200">
 	<div class="hero-content text-center">
 		<div class="max-w-md">
@@ -6,7 +10,11 @@
 				routes for a fleet of vehicles to serve a set of customers. The routes are subject to
 				constraints such as the capacity of the vehicles and the time windows of the customers.
 			</p>
-			<a href="/auth/login"><button class="btn btn-primary">Get Started</button></a>
+			{#if $page.data.session}
+				<a href="/problems"><button class="btn btn-primary">Get Started</button></a>
+			{:else}
+				<a href="/auth/sigin"><button class="btn btn-primary">Get Started</button></a>
+			{/if}
 		</div>
 	</div>
 </div>
